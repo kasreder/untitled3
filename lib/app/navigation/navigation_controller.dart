@@ -1,6 +1,5 @@
 // 파일 경로: lib/app/navigation/navigation_controller.dart
 // 파일 설명: 현재 라우트에 맞춰 탐색 인덱스 상태를 동기화하는 컨트롤러.
-
 import 'package:flutter/foundation.dart';
 
 import 'app_destinations.dart';

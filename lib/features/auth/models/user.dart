@@ -60,6 +60,7 @@ class User {
   bool get isLocalLogin => loginType == LoginType.local;
 
   /// 화면 표시에 활용할 익명화된 이메일 문자열을 반환한다.
+
   String get maskedEmail {
     final parts = email.split('@');
     if (parts.length != 2) {

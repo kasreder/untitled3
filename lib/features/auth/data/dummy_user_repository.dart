@@ -2,7 +2,6 @@
 // 파일 설명: 데모 회원과 암호화된 자격 증명을 보관하는 인메모리 저장소.
 
 import 'dart:async';
-
 import '../models/login_type.dart';
 import '../models/user.dart';
 import '../models/user_wallet.dart';

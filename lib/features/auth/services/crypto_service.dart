@@ -25,18 +25,21 @@ class CryptoService {
   final encrypt.IV _iv;
 
   /// 전달된 [plaintext]를 암호화해 Base64 문자열로 반환한다.
+
   String encryptSensitive(String plaintext) {
     final encrypted = _encrypter.encrypt(plaintext, iv: _iv);
     return encrypted.base64;
   }
 
   /// [encryptSensitive]로 생성된 Base64 문자열 [cipherText]를 복호화한다.
+
   String decryptSensitive(String cipherText) {
     final encrypted = encrypt.Encrypted(base64Decode(cipherText));
     return _encrypter.decrypt(encrypted, iv: _iv);
   }
 
   /// [rawSecret]이 저장된 [encryptedSecret]과 일치하는지 검증한다.
+
   bool verifySecret({
     required String rawSecret,
     required String encryptedSecret,

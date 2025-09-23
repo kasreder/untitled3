@@ -4,9 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import 'package:untitled3/features/auth/controllers/auth_controller.dart';
-
 import 'app_destinations.dart';
 import 'navigation_controller.dart';
 
@@ -182,3 +180,4 @@ String _labelForDestination(AppDestination destination, AuthController authContr
   }
   return destination.label;
 }
+

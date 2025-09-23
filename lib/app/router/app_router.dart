@@ -2,7 +2,6 @@
 // 파일 설명: 애플리케이션 셸에서 사용할 라우터 구성을 정의.
 
 import 'package:go_router/go_router.dart';
-
 import '../navigation/adaptive_navigation_shell.dart';
 import '../navigation/app_destinations.dart';
 
