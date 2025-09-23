@@ -1,122 +1,318 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const AppRoot());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class AppRoot extends StatefulWidget {
+  const AppRoot({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<AppRoot> createState() => _AppRootState();
+}
+
+class _AppRootState extends State<AppRoot> {
+  late final GoRouter _router = _createRouter();
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+    return ChangeNotifierProvider(
+      create: (_) => NavigationController(),
+      child: MaterialApp.router(
+        title: '청록 웹 서비스',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E9D9D)),
+          useMaterial3: true,
+        ),
+        routerConfig: _router,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
+GoRouter _createRouter() {
+  return GoRouter(
+    initialLocation: appDestinations.first.location,
+    routes: [
+      ShellRoute(
+        builder: (context, state, child) => _AdaptiveNavigationShell(
+          state: state,
+          child: child,
+        ),
+        routes: [
+          for (final destination in appDestinations)
+            GoRoute(
+              path: destination.location,
+              name: destination.name,
+              pageBuilder: (context, state) => NoTransitionPage(
+                key: state.pageKey,
+                child: destination.builder(context),
+              ),
+            ),
+        ],
+      ),
+    ],
+  );
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _AdaptiveNavigationShell extends StatelessWidget {
+  const _AdaptiveNavigationShell({
+    required this.state,
+    required this.child,
+  });
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  final GoRouterState state;
+  final Widget child;
+
+  static const double _navigationBreakpoint = 650;
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+    final navigation = context.watch<NavigationController>();
+    navigation.syncWithLocation(state.matchedLocation);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final useBottomNavigation = constraints.maxWidth <= _navigationBreakpoint;
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(_titleForRoute(state.matchedLocation)),
+          ),
+          drawer: _AppDrawer(
+            currentIndex: navigation.selectedIndex,
+            onDestinationSelected: (index) {
+              _handleDestinationSelection(context, navigation, index);
+            },
+          ),
+          body: useBottomNavigation
+              ? child
+              : Row(
+                  children: [
+                    NavigationRail(
+                      selectedIndex: navigation.selectedIndex,
+                      onDestinationSelected: (index) {
+                        _handleDestinationSelection(context, navigation, index);
+                      },
+                      labelType: NavigationRailLabelType.all,
+                      destinations: [
+                        for (final destination in appDestinations)
+                          NavigationRailDestination(
+                            icon: Icon(destination.icon),
+                            label: Text(destination.label),
+                          ),
+                      ],
+                    ),
+                    const VerticalDivider(width: 1),
+                    Expanded(child: child),
+                  ],
+                ),
+          bottomNavigationBar: useBottomNavigation
+              ? NavigationBar(
+                  selectedIndex: navigation.selectedIndex,
+                  onDestinationSelected: (index) {
+                    _handleDestinationSelection(context, navigation, index);
+                  },
+                  destinations: [
+                    for (final destination in appDestinations)
+                      NavigationDestination(
+                        icon: Icon(destination.icon),
+                        label: destination.label,
+                      ),
+                  ],
+                )
+              : null,
+        );
+      },
+    );
+  }
+
+  String _titleForRoute(String location) {
+    final match = appDestinations.firstWhere(
+      (destination) => destination.location == location,
+      orElse: () => appDestinations.first,
+    );
+    return match.label;
+  }
+}
+
+void _handleDestinationSelection(
+  BuildContext context,
+  NavigationController controller,
+  int index,
+) {
+  if (index < 0 || index >= appDestinations.length) {
+    return;
+  }
+  final destination = appDestinations[index];
+  controller.selectIndex(index);
+  context.go(destination.location);
+}
+
+class _AppDrawer extends StatelessWidget {
+  const _AppDrawer({
+    required this.currentIndex,
+    required this.onDestinationSelected,
+  });
+
+  final int currentIndex;
+  final ValueChanged<int> onDestinationSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: SafeArea(
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  '청록 네트워크',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView.separated(
+                itemCount: appDestinations.length,
+                separatorBuilder: (context, index) => const Divider(height: 1),
+                itemBuilder: (context, index) {
+                  final destination = appDestinations[index];
+                  final isSelected = currentIndex == index;
+                  return ListTile(
+                    leading: Icon(destination.icon),
+                    title: Text(destination.label),
+                    selected: isSelected,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      onDestinationSelected(index);
+                    },
+                  );
+                },
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class NavigationController extends ChangeNotifier {
+  int _selectedIndex = 0;
+  String _location = appDestinations.first.location;
+
+  int get selectedIndex => _selectedIndex;
+
+  void selectIndex(int index) {
+    if (index == _selectedIndex) {
+      return;
+    }
+    _selectedIndex = index;
+    _location = appDestinations[index].location;
+    notifyListeners();
+  }
+
+  void syncWithLocation(String location) {
+    if (_location == location) {
+      return;
+    }
+    _location = location;
+    final matchIndex = appDestinations.indexWhere(
+      (destination) => destination.location == location,
+    );
+    if (matchIndex != -1 && matchIndex != _selectedIndex) {
+      _selectedIndex = matchIndex;
+      notifyListeners();
+    }
+  }
+}
+
+class AppDestination {
+  const AppDestination({
+    required this.location,
+    required this.name,
+    required this.label,
+    required this.icon,
+    required this.builder,
+  });
+
+  final String location;
+  final String name;
+  final String label;
+  final IconData icon;
+  final WidgetBuilder builder;
+}
+
+final List<AppDestination> appDestinations = [
+  AppDestination(
+    location: '/',
+    name: 'home',
+    label: '홈',
+    icon: Icons.home_filled,
+    builder: (_) => const _SimplePage(message: '홈 페이지가 준비 중입니다.'),
+  ),
+  AppDestination(
+    location: '/news',
+    name: 'news',
+    label: '뉴스',
+    icon: Icons.article_outlined,
+    builder: (_) => const _SimplePage(message: '최신 뉴스를 곧 전해드릴게요.'),
+  ),
+  AppDestination(
+    location: '/free',
+    name: 'free',
+    label: '자유',
+    icon: Icons.forum_outlined,
+    builder: (_) => const _SimplePage(message: '자유 게시판이 준비 중입니다.'),
+  ),
+  AppDestination(
+    location: '/experiment',
+    name: 'experiment',
+    label: '실험',
+    icon: Icons.science_outlined,
+    builder: (_) => const _SimplePage(message: '실험실 공간을 기대해 주세요.'),
+  ),
+  AppDestination(
+    location: '/info',
+    name: 'info',
+    label: '정보',
+    icon: Icons.info_outline,
+    builder: (_) => const _SimplePage(message: '유용한 정보를 모으는 중입니다.'),
+  ),
+  AppDestination(
+    location: '/login',
+    name: 'login',
+    label: '로그인',
+    icon: Icons.login,
+    builder: (_) => const _SimplePage(message: '로그인 페이지입니다.'),
+  ),
+];
+
+class _SimplePage extends StatelessWidget {
+  const _SimplePage({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        message,
+        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 }
