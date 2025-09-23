@@ -1,12 +1,11 @@
-// File: lib/features/auth/models/user.dart
-// Description: Immutable domain model describing a signed-in member profile.
+// 파일 경로: lib/features/auth/models/user.dart
+// 파일 설명: 로그인한 회원 프로필을 표현하는 불변 도메인 모델.
 
 import 'login_type.dart';
 
-/// Represents a registered member of the platform with metadata needed for
-/// authentication, auditing, and content personalization.
+/// 인증·감사·콘텐츠 개인화에 필요한 메타데이터를 담은 플랫폼 회원 모델.
 class User {
-  /// Creates a new [User] instance.
+  /// 새로운 [User] 인스턴스를 생성한다.
   const User({
     required this.id,
     required this.name,
@@ -21,46 +20,47 @@ class User {
     required this.authoredPostTitles,
   });
 
-  /// Stable primary key for the member record.
+  /// 회원 레코드의 안정적인 기본 키.
   final String id;
 
-  /// Legal name used for identity verification and settlement.
+  /// 본인 확인과 정산에 사용하는 실명.
   final String name;
 
-  /// Login identifier. Stored in clear text for uniqueness checks, while
-  /// credentials are encrypted according to AES-256 requirements.
+  /// 로그인에 사용하는 식별자. 중복 검사를 위해 평문으로 저장하며,
+  /// 자격 증명은 AES-256 요건에 맞춰 암호화된다.
   final String email;
 
-  /// AES-256 encrypted password for members who authenticate locally.
+  /// 로컬 인증 회원을 위한 AES-256 암호화 비밀번호.
   ///
-  /// Kakao/Naver users retain an encrypted refresh token instead of a password.
+  /// 카카오·네이버 사용자는 비밀번호 대신 암호화된 리프레시 토큰을 보관한다.
   final String encryptedPassword;
 
-  /// Channel the member used during onboarding (local, Kakao, or Naver).
+  /// 회원이 가입 시 선택한 인증 채널(로컬, 카카오, 네이버).
   final LoginType loginType;
 
-  /// Nickname displayed on bulletin board posts.
+  /// 게시글에 표시되는 닉네임.
   final String nickname;
 
-  /// Current reward point balance for the member.
+  /// 회원의 현재 포인트 잔액.
   final int points;
 
-  /// Timestamp of the initial registration event.
+  /// 최초 가입 시각.
   final DateTime joinedAt;
 
-  /// Timestamp of the most recent profile modification (excluding nickname).
+  /// 닉네임을 제외한 최근 프로필 수정 시각.
   final DateTime updatedAt;
 
-  /// Timestamp of the latest nickname change.
+  /// 최근 닉네임 변경 시각.
   final DateTime nicknameUpdatedAt;
 
-  /// Cached titles for the member's recent posts, used for "내가쓴글보기" listings.
+  /// "내가쓴글보기" 목록에 사용하는 최근 게시글 제목 캐시.
   final List<String> authoredPostTitles;
 
-  /// Convenience flag indicating whether the member uses local credentials.
+  /// 회원이 로컬 자격 증명을 사용하는지 나타내는 편의 플래그.
   bool get isLocalLogin => loginType == LoginType.local;
 
-  /// Returns an anonymised representation of the member's email for UI display.
+  /// 화면 표시에 활용할 익명화된 이메일 문자열을 반환한다.
+
   String get maskedEmail {
     final parts = email.split('@');
     if (parts.length != 2) {
@@ -76,7 +76,7 @@ class User {
     return '$masked@${parts.last}';
   }
 
-  /// Generates a new [User] copy with selective overrides.
+  /// 선택한 값만 변경한 새로운 [User] 복사본을 생성한다.
   User copyWith({
     String? name,
     String? email,

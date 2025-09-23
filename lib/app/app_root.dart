@@ -1,12 +1,10 @@
+// 파일 경로: lib/app/app_root.dart
+// 파일 설명: 전역 의존성을 구성하고 루트 머티리얼 애플리케이션 셸을 구축.
 
-// File: lib/app/app_root.dart
-// Description: Configures global dependency providers and builds the root Material application shell.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
-
 import 'package:untitled3/features/auth/controllers/auth_controller.dart';
 import 'package:untitled3/features/auth/data/dummy_user_repository.dart';
 import 'package:untitled3/features/auth/services/crypto_service.dart';

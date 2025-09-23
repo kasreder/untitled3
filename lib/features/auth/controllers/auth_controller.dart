@@ -1,5 +1,5 @@
-// File: lib/features/auth/controllers/auth_controller.dart
-// Description: ChangeNotifier managing authentication state and MetaMask linking.
+// 파일 경로: lib/features/auth/controllers/auth_controller.dart
+// 파일 설명: 인증 상태와 메타마스크 연동을 관리하는 상태 알림 컨트롤러.
 
 import 'package:flutter/foundation.dart';
 
@@ -9,10 +9,9 @@ import 'package:untitled3/features/auth/models/user.dart';
 import 'package:untitled3/features/auth/models/user_wallet.dart';
 import 'package:untitled3/features/auth/services/metamask_connector.dart';
 
-/// Reactive authentication state holder for the application.
+/// 애플리케이션에서 인증 상태를 보관하고 갱신하는 반응형 컨트롤러.
 ///
-/// The controller orchestrates credential validation, wallet handshakes, and
-/// content retrieval ("내가쓴글보기") while exposing immutable view models to the UI.
+/// 자격 증명 검증, 지갑 연동, 게시글 불러오기를 조율하면서 화면에는 불변 뷰모델만 노출한다.
 class AuthController extends ChangeNotifier {
   AuthController({
     required DummyUserRepository userRepository,
@@ -31,31 +30,31 @@ class AuthController extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
 
-  /// Currently authenticated member (null when signed out).
+  /// 현재 로그인한 회원(로그아웃 시 null).
   User? get currentUser => _currentUser;
 
-  /// MetaMask wallet linked to the current session.
+  /// 현재 세션과 연결된 메타마스크 지갑.
   UserWallet? get currentWallet => _currentWallet;
 
-  /// Cached titles used for the "내가쓴글보기" module.
+  /// "내가쓴글보기" 모듈에서 사용하는 게시글 제목 캐시.
   List<String> get authoredPosts => List.unmodifiable(_authoredPosts);
 
-  /// Wallet address returned by the latest MetaMask handshake.
+  /// 최근 메타마스크 연동에서 확인된 지갑 주소.
   String? get connectedWalletAddress => _connectedWalletAddress;
 
-  /// Exposes loading state to disable submit buttons.
+  /// 제출 버튼 비활성화를 위한 로딩 상태.
   bool get isLoading => _isLoading;
 
-  /// Latest error message resulting from an authentication attempt.
+  /// 인증 시도 중 발생한 최신 오류 메시지.
   String? get errorMessage => _errorMessage;
 
-  /// Clears any stored error message without mutating the current session.
+  /// 현재 세션을 변경하지 않고 저장된 오류 메시지를 초기화한다.
   void clearError() {
     _errorMessage = null;
     notifyListeners();
   }
 
-  /// Attempts to sign in with locally stored credentials.
+  /// 로컬에 저장된 자격 증명으로 로그인한다.
   Future<void> loginWithLocal({
     required String email,
     required String password,
@@ -69,7 +68,7 @@ class AuthController extends ChangeNotifier {
     });
   }
 
-  /// Initiates a social login flow (Kakao or Naver) using the provided email.
+  /// 주어진 이메일을 활용해 카카오 또는 네이버 소셜 로그인을 시작한다.
   Future<void> loginWithSocial({
     required LoginType loginType,
     required String email,
@@ -83,7 +82,7 @@ class AuthController extends ChangeNotifier {
     });
   }
 
-  /// Connects to MetaMask and signs a challenge string for authentication.
+  /// 메타마스크 지갑을 연결하고 인증용 메시지에 서명한다.
   Future<void> loginWithMetamask() async {
     await _guardedExecution(() async {
       final walletAddress = await _metamaskConnector.connectWallet();
@@ -100,7 +99,7 @@ class AuthController extends ChangeNotifier {
     });
   }
 
-  /// Resets the authentication state to an empty session.
+  /// 인증 상태를 초기화해 빈 세션으로 되돌린다.
   void logout() {
     _currentUser = null;
     _currentWallet = null;

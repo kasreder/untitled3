@@ -1,10 +1,10 @@
-// File: lib/app/navigation/adaptive_navigation_shell.dart
-// Description: Responsive scaffold that adapts navigation chrome to screen size.
+// 파일 경로: lib/app/navigation/adaptive_navigation_shell.dart
+// 파일 설명: 화면 크기에 맞춰 탐색 인터페이스를 변환하는 반응형 스캐폴드.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
+import 'package:untitled3/features/auth/controllers/auth_controller.dart';
 import 'app_destinations.dart';
 import 'navigation_controller.dart';
 
@@ -23,6 +23,7 @@ class AdaptiveNavigationShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navigation = context.watch<NavigationController>();
+    final auth = context.watch<AuthController>();
     navigation.syncWithLocation(state.matchedLocation);
 
     return LayoutBuilder(
@@ -34,8 +35,9 @@ class AdaptiveNavigationShell extends StatelessWidget {
           ),
           drawer: AppDrawer(
             currentIndex: navigation.selectedIndex,
+            authController: auth,
             onDestinationSelected: (index) {
-              _handleDestinationSelection(context, navigation, index);
+              _handleDestinationSelection(context, navigation, auth, index);
             },
           ),
           body: useBottomNavigation
@@ -45,14 +47,14 @@ class AdaptiveNavigationShell extends StatelessWidget {
                     NavigationRail(
                       selectedIndex: navigation.selectedIndex,
                       onDestinationSelected: (index) {
-                        _handleDestinationSelection(context, navigation, index);
+                        _handleDestinationSelection(context, navigation, auth, index);
                       },
                       labelType: NavigationRailLabelType.all,
                       destinations: [
                         for (final destination in appDestinations)
                           NavigationRailDestination(
-                            icon: Icon(destination.icon),
-                            label: Text(destination.label),
+                            icon: Icon(_iconForDestination(destination, auth)),
+                            label: Text(_labelForDestination(destination, auth)),
                           ),
                       ],
                     ),
@@ -64,13 +66,13 @@ class AdaptiveNavigationShell extends StatelessWidget {
               ? NavigationBar(
                   selectedIndex: navigation.selectedIndex,
                   onDestinationSelected: (index) {
-                    _handleDestinationSelection(context, navigation, index);
+                    _handleDestinationSelection(context, navigation, auth, index);
                   },
                   destinations: [
                     for (final destination in appDestinations)
                       NavigationDestination(
-                        icon: Icon(destination.icon),
-                        label: destination.label,
+                        icon: Icon(_iconForDestination(destination, auth)),
+                        label: _labelForDestination(destination, auth),
                       ),
                   ],
                 )
@@ -92,11 +94,13 @@ class AdaptiveNavigationShell extends StatelessWidget {
 class AppDrawer extends StatelessWidget {
   const AppDrawer({
     required this.currentIndex,
+    required this.authController,
     required this.onDestinationSelected,
     super.key,
   });
 
   final int currentIndex;
+  final AuthController authController;
   final ValueChanged<int> onDestinationSelected;
 
   @override
@@ -128,8 +132,8 @@ class AppDrawer extends StatelessWidget {
                   final destination = appDestinations[index];
                   final isSelected = currentIndex == index;
                   return ListTile(
-                    leading: Icon(destination.icon),
-                    title: Text(destination.label),
+                    leading: Icon(_iconForDestination(destination, authController)),
+                    title: Text(_labelForDestination(destination, authController)),
                     selected: isSelected,
                     onTap: () {
                       Navigator.of(context).pop();
@@ -149,12 +153,31 @@ class AppDrawer extends StatelessWidget {
 void _handleDestinationSelection(
   BuildContext context,
   NavigationController controller,
+  AuthController authController,
   int index,
 ) {
   if (index < 0 || index >= appDestinations.length) {
     return;
   }
   final destination = appDestinations[index];
+  if (destination.name == 'login' && authController.currentUser != null) {
+    authController.logout();
+  }
   controller.selectIndex(index);
   context.go(destination.location);
 }
+
+IconData _iconForDestination(AppDestination destination, AuthController authController) {
+  if (destination.name == 'login' && authController.currentUser != null) {
+    return Icons.logout;
+  }
+  return destination.icon;
+}
+
+String _labelForDestination(AppDestination destination, AuthController authController) {
+  if (destination.name == 'login' && authController.currentUser != null) {
+    return '로그아웃';
+  }
+  return destination.label;
+}
+

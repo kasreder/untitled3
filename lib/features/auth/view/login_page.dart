@@ -1,5 +1,5 @@
-// File: lib/features/auth/view/login_page.dart
-// Description: Interactive login page with local, social, and MetaMask flows.
+// 파일 경로: lib/features/auth/view/login_page.dart
+// 파일 설명: 로컬·소셜·메타마스크 흐름을 제공하는 인터랙티브 로그인 페이지.
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,8 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:untitled3/features/auth/controllers/auth_controller.dart';
 import 'package:untitled3/features/auth/models/login_type.dart';
 
-/// Login screen that exposes multiple authentication pathways and renders the
-/// member profile once authenticated.
+/// 다양한 인증 경로를 제공하며 로그인 완료 후 회원 정보를 보여주는 화면.
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 

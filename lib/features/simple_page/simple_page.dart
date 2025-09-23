@@ -1,6 +1,5 @@
-// File: lib/features/simple_page/simple_page.dart
-// Description: Placeholder page used for sections under construction.
-
+// 파일 경로: lib/features/simple_page/simple_page.dart
+// 파일 설명: 개발 중인 섹션을 위한 플레이스홀더 페이지.
 
 import 'package:flutter/material.dart';
 

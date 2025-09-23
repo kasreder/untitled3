@@ -1,14 +1,13 @@
-// File: lib/features/auth/data/dummy_user_repository.dart
-// Description: In-memory repository that seeds demo users and encrypted credentials.
+// 파일 경로: lib/features/auth/data/dummy_user_repository.dart
+// 파일 설명: 데모 회원과 암호화된 자격 증명을 보관하는 인메모리 저장소.
 
 import 'dart:async';
-
 import '../models/login_type.dart';
 import '../models/user.dart';
 import '../models/user_wallet.dart';
 import '../services/crypto_service.dart';
 
-/// Combines member and wallet data for the prototype, replacing a real database.
+/// 실제 데이터베이스 대신 프로토타입에서 회원·지갑 데이터를 함께 제공하는 저장소.
 class DummyUserRepository {
   DummyUserRepository({required CryptoService cryptoService})
       : _cryptoService = cryptoService {
@@ -111,7 +110,7 @@ class DummyUserRepository {
     _initialised = true;
   }
 
-  /// Performs a local credential check using the encrypted password store.
+  /// 암호화된 비밀번호 저장소를 활용해 로컬 자격 증명을 검증한다.
   Future<User> authenticateLocal({
     required String email,
     required String password,
@@ -131,7 +130,7 @@ class DummyUserRepository {
     return bundle.user;
   }
 
-  /// Returns the profile linked to a Kakao or Naver social login.
+  /// 카카오 또는 네이버 소셜 로그인에 연동된 프로필을 반환한다.
   Future<User> authenticateSocial({
     required LoginType loginType,
     required String email,
@@ -144,7 +143,7 @@ class DummyUserRepository {
     return bundle.user;
   }
 
-  /// Retrieves the wallet information for the specified user.
+  /// 지정된 회원의 지갑 정보를 조회한다.
   Future<UserWallet?> fetchWallet(String userId) async {
     await Future<void>.delayed(const Duration(milliseconds: 240));
     try {
@@ -156,7 +155,7 @@ class DummyUserRepository {
     }
   }
 
-  /// Finds a user by the linked MetaMask wallet address.
+  /// 연결된 메타마스크 지갑 주소로 회원을 찾는다.
   Future<User?> findByWalletAddress(String walletAddress) async {
     await Future<void>.delayed(const Duration(milliseconds: 260));
     try {
@@ -170,7 +169,7 @@ class DummyUserRepository {
     }
   }
 
-  /// Loads the titles of the posts written by the user for "내가쓴글보기".
+  /// "내가쓴글보기"에 사용할 회원 작성 글 제목 목록을 불러온다.
   Future<List<String>> fetchAuthoredPosts(String userId) async {
     await Future<void>.delayed(const Duration(milliseconds: 210));
     try {
