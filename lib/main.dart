@@ -45,7 +45,7 @@ GoRouter _createRouter() {
         routes: [
           for (final destination in appDestinations)
             GoRoute(
-              path: destination.path,
+              path: destination.location,
               name: destination.name,
               pageBuilder: (context, state) => NoTransitionPage(
                 key: state.pageKey,
@@ -239,60 +239,60 @@ class NavigationController extends ChangeNotifier {
 
 class AppDestination {
   const AppDestination({
-    required this.path,
+    required this.location,
     required this.name,
     required this.label,
     required this.icon,
     required this.builder,
   });
 
-  final String path;
+  final String location;
   final String name;
   final String label;
   final IconData icon;
   final WidgetBuilder builder;
-
-  String get location => path.isEmpty ? '/' : '/$path';
 }
 
 final List<AppDestination> appDestinations = [
   AppDestination(
-    path: '',
+    location: '/',
     name: 'home',
     label: '홈',
     icon: Icons.home_filled,
     builder: (_) => const _SimplePage(message: '홈 페이지가 준비 중입니다.'),
   ),
   AppDestination(
-    path: 'news',
+    location: '/news',
     name: 'news',
     label: '뉴스',
     icon: Icons.article_outlined,
     builder: (_) => const _SimplePage(message: '최신 뉴스를 곧 전해드릴게요.'),
   ),
   AppDestination(
-    path: 'free',
+    location: '/free',
     name: 'free',
     label: '자유',
     icon: Icons.forum_outlined,
     builder: (_) => const _SimplePage(message: '자유 게시판이 준비 중입니다.'),
   ),
   AppDestination(
-    path: 'experiment',
+
+    location: '/experiment',
+
     name: 'experiment',
     label: '실험',
     icon: Icons.science_outlined,
     builder: (_) => const _SimplePage(message: '실험실 공간을 기대해 주세요.'),
   ),
   AppDestination(
-    path: 'info',
+    location: '/info',
     name: 'info',
     label: '정보',
     icon: Icons.info_outline,
     builder: (_) => const _SimplePage(message: '유용한 정보를 모으는 중입니다.'),
   ),
   AppDestination(
-    path: 'login',
+    location: '/login',
     name: 'login',
     label: '로그인',
     icon: Icons.login,
