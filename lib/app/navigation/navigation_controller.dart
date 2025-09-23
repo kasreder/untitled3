@@ -1,6 +1,5 @@
 // File: lib/app/navigation/navigation_controller.dart
 // Description: Synchronises navigation index state with the current route.
-
 import 'package:flutter/foundation.dart';
 
 import 'app_destinations.dart';

@@ -1,6 +1,7 @@
 // File: lib/features/simple_page/simple_page.dart
 // Description: Placeholder page used for sections under construction.
 
+
 import 'package:flutter/material.dart';
 
 class SimplePage extends StatelessWidget {
