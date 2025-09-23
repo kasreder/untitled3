@@ -1,3 +1,6 @@
+// File: lib/app/navigation/adaptive_navigation_shell.dart
+// Description: Responsive scaffold that adapts navigation chrome to screen size.
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';

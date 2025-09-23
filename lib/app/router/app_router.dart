@@ -1,3 +1,6 @@
+// File: lib/app/router/app_router.dart
+// Description: Declares the GoRouter configuration for the application shell.
+
 import 'package:go_router/go_router.dart';
 
 import '../navigation/adaptive_navigation_shell.dart';

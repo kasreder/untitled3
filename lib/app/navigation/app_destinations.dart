@@ -1,5 +1,8 @@
-import 'package:flutter/material.dart';
+// File: lib/app/navigation/app_destinations.dart
+// Description: Defines the navigable destinations for the adaptive shell router.
 
+import 'package:flutter/material.dart';
+import 'package:untitled3/features/auth/view/login_page.dart';
 import 'package:untitled3/features/simple_page/simple_page.dart';
 
 class AppDestination {
@@ -59,6 +62,6 @@ final List<AppDestination> appDestinations = [
     name: 'login',
     label: '로그인',
     icon: Icons.login,
-    builder: (_) => const SimplePage(message: '로그인 페이지입니다.'),
+    builder: (_) => const LoginPage(message: '로그인 페이지입니다.'),
   ),
 ];
