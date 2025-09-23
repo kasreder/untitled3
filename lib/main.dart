@@ -276,7 +276,9 @@ final List<AppDestination> appDestinations = [
     builder: (_) => const _SimplePage(message: '자유 게시판이 준비 중입니다.'),
   ),
   AppDestination(
+
     location: '/experiment',
+
     name: 'experiment',
     label: '실험',
     icon: Icons.science_outlined,
