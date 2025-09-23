@@ -62,6 +62,6 @@ final List<AppDestination> appDestinations = [
     name: 'login',
     label: '로그인',
     icon: Icons.login,
-    builder: (_) => const LoginPage(message: '로그인 페이지입니다.'),
+    builder: (_) => const LoginPage(),
   ),
 ];
