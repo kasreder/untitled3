@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:html' as html;
 import 'dart:ui_web' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'ckeditor5_platform_interface.dart' hide buildPlatformEditor;
@@ -55,6 +56,9 @@ Widget buildPlatformEditor({
         pendingContentRequest?.complete(payload['data'] as String? ?? '');
         pendingContentRequest = null;
         break;
+      case 'error':
+        debugPrint('CKEditor error: ${payload['data']}');
+        break;
     }
   });
 
@@ -94,6 +98,7 @@ Widget buildPlatformEditor({
 String _buildEditorHtml(String initialHtml, String editorId) {
   final escapedInitial = jsonEncode(initialHtml);
   final escapedId = jsonEncode(editorId);
+  const ckeditorCdnRoot = 'https://cdn.ckeditor.com/ckeditor5/41.2.0/super-build/';
   return '''
 <!DOCTYPE html>
 <html lang="ko">
@@ -104,7 +109,10 @@ String _buildEditorHtml(String initialHtml, String editorId) {
     body { margin: 0; padding: 0; background: transparent; }
     #editor { min-height: 280px; }
   </style>
-  <script src="https://cdn.ckeditor.com/ckeditor5/41.2.0/classic/ckeditor.js"></script>
+  <script>
+    window.CKEDITOR_BASEPATH = '$ckeditorCdnRoot';
+  </script>
+  <script src="${ckeditorCdnRoot}ckeditor.js"></script>
 </head>
 <body>
   <div id="editor"></div>
@@ -132,10 +140,75 @@ String _buildEditorHtml(String initialHtml, String editorId) {
       return null;
     };
 
-    ClassicEditor.create(document.querySelector('#editor'), {
+    CKEDITOR.ClassicEditor.create(document.querySelector('#editor'), {
       toolbar: {
+        items: [
+          'undo', 'redo',
+          '|', 'heading',
+          '|', 'bold', 'italic', 'underline', 'strikethrough', 'link',
+          '|', 'bulletedList', 'numberedList', 'outdent', 'indent',
+          '|', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock',
+          '|', 'horizontalLine', 'removeFormat'
+        ],
         shouldNotGroupWhenFull: true
-      }
+      },
+      image: {
+        resizeUnit: '%',
+        resizeOptions: [
+          {
+            name: 'resizeImage:original',
+            label: '원본',
+            value: null
+          },
+          {
+            name: 'resizeImage:75',
+            label: '75%',
+            value: '75'
+          },
+          {
+            name: 'resizeImage:50',
+            label: '50%',
+            value: '50'
+          },
+          {
+            name: 'resizeImage:25',
+            label: '25%',
+            value: '25'
+          }
+        ],
+        toolbar: [
+          'toggleImageCaption',
+          'imageTextAlternative',
+          '|',
+          'imageStyle:inline',
+          'imageStyle:block',
+          'imageStyle:side',
+          '|',
+          'resizeImage'
+        ]
+      },
+      removePlugins: [
+        'CKBox',
+        'CKFinder',
+        'EasyImage',
+        'RealTimeCollaborativeComments',
+        'RealTimeCollaborativeTrackChanges',
+        'RealTimeCollaborativeRevisionHistory',
+        'PresenceList',
+        'Comments',
+        'TrackChanges',
+        'TrackChangesData',
+        'RevisionHistory',
+        'Pagination',
+        'WProofreader',
+        'MathType',
+        'SlashCommand',
+        'Template',
+        'DocumentOutline',
+        'FormatPainter',
+        'TableOfContents',
+        'PasteFromOfficeEnhanced'
+      ]
     }).then(editor => {
       editorInstance = editor;
       editor.model.document.on('change:data', () => {
@@ -158,6 +231,7 @@ String _buildEditorHtml(String initialHtml, String editorId) {
       });
     }).catch(error => {
       console.error(error);
+      postMessage({ type: 'error', data: error && error.message ? error.message : String(error) });
     });
   </script>
 </body>
