@@ -1,4 +1,3 @@
-//lib/features/board/widgets/ckeditor5_platform_web.dar
 import 'dart:async';
 import 'dart:convert';
 import 'dart:html' as html;
@@ -105,7 +104,7 @@ String _buildEditorHtml(String initialHtml, String editorId) {
     body { margin: 0; padding: 0; background: transparent; }
     #editor { min-height: 280px; }
   </style>
-  <script src="https://cdn.ckeditor.com/ckeditor5/41.2.1/super-build/ckeditor.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ckeditor5-build-classic-with-image-resize@12.4.0/build/ckeditor.js"></script>
 </head>
 <body>
   <div id="editor"></div>
@@ -133,102 +132,114 @@ String _buildEditorHtml(String initialHtml, String editorId) {
       return null;
     };
 
-    const classicEditorConstructor = window.CKEDITOR && window.CKEDITOR.ClassicEditor;
-    if (!classicEditorConstructor) {
-      console.error('CKEditor super build is not available.');
-    } else {
-      classicEditorConstructor.create(document.querySelector('#editor'), {
-        toolbar: {
+    ClassicEditor.create(document.querySelector('#editor'), {
+      toolbar: {
           items: [
-            'heading',
-            '|',
-            'bold',
-            'italic',
-            'underline',
-            'strikethrough',
-            '|',
-            'bulletedList',
-            'numberedList',
-            '|',
-            'outdent',
-            'indent',
-            '|',
-            'link',
-            'blockQuote',
-            'insertTable',
-            'mediaEmbed',
-            '|',
-            'undo',
-            'redo'
+            "exportPDF",
+            "|",
+            "findAndReplace",
+            "selectAll",
+            "|",
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "strikethrough",
+            "underline",
+            "code",
+            "subscript",
+            "superscript",
+            "removeFormat",
+            "|",
+            "bulletedList",
+            "numberedList",
+            "todoList",
+            "|",
+            "outdent",
+            "indent",
+            "|",
+            "undo",
+            "redo",
+            "-",
+            "fontSize",
+            "fontFamily",
+            "fontColor",
+            "fontBackgroundColor",
+            "highlight",
+            "|",
+            "alignment",
+            "|",
+            "link",
+            "imageUpload",
+            'resizeImage:50', 'resizeImage:75',
+            "blockQuote",
+            "insertTable",
+            "mediaEmbed",
+            "codeBlock",
+            "|",
+            "specialCharacters",
+            "horizontalLine",
+            "|",
+            "sourceEditing",
           ],
-          shouldNotGroupWhenFull: true
-        },
-        image: {
-          resizeUnit: '%',
-          resizeOptions: [
-            {
-              name: 'resizeImage:original',
-              label: 'Original',
-              value: null
-            },
-            {
-              name: 'resizeImage:25',
-              label: '25%',
-              value: '25'
-            },
-            {
-              name: 'resizeImage:50',
-              label: '50%',
-              value: '50'
-            },
-            {
-              name: 'resizeImage:75',
-              label: '75%',
-              value: '75'
-            }
-          ],
-          toolbar: [
-            'toggleImageCaption',
-            'imageTextAlternative',
-            '|',
-            'imageStyle:inline',
-            'imageStyle:block',
-            'imageStyle:side',
-            '|',
-            'resizeImage'
-          ]
-        },
-        removePlugins: [
-          'AIAssistant',
-          'CKBox',
-          'CKFinder',
-          'EasyImage'
+        shouldNotGroupWhenFull: true
+      },
+      image: {
+        resizeUnit: '%',
+        resizeOptions: [
+          {
+            name: 'resizeImage:original',
+            label: 'Original',
+            value: null
+          },
+          {
+            name: 'resizeImage:25',
+            label: '25%',
+            value: '25'
+          },
+          {
+            name: 'resizeImage:50',
+            label: '50%',
+            value: '50'
+          },
+          {
+            name: 'resizeImage:75',
+            label: '75%',
+            value: '75'
+          }
+        ],
+        toolbar: [
+          'imageStyle:inline',
+          'imageStyle:block',
+          'imageStyle:side',
+          '|',
+          'resizeImage',
+          'imageTextAlternative'
         ]
-      }).then(editor => {
-        editorInstance = editor;
-        editor.model.document.on('change:data', () => {
-          postMessage({ type: 'change', data: editor.getData() });
-        });
-        editor.setData(${escapedInitial} || '');
-        postMessage({ type: 'ready' });
-        window.addEventListener('message', event => {
-          let payload = event.data;
-          if (typeof payload === 'string') {
-            try {
-              payload = JSON.parse(payload);
-            } catch (error) {
-              payload = null;
-            }
-
-          }
-          if (payload && payload.editorId === editorId) {
-            window.handleMessage(payload);
-          }
-        });
-      }).catch(error => {
-        console.error(error);
+      }
+    }).then(editor => {
+      editorInstance = editor;
+      editor.model.document.on('change:data', () => {
+        postMessage({ type: 'change', data: editor.getData() });
       });
-    }
+      editor.setData(${escapedInitial} || '');
+      postMessage({ type: 'ready' });
+      window.addEventListener('message', event => {
+        let payload = event.data;
+        if (typeof payload === 'string') {
+          try {
+            payload = JSON.parse(payload);
+          } catch (error) {
+            payload = null;
+          }
+        }
+        if (payload && payload.editorId === editorId) {
+          window.handleMessage(payload);
+        }
+      });
+    }).catch(error => {
+      console.error(error);
+    });
   </script>
 </body>
 </html>
