@@ -218,6 +218,7 @@ String _buildEditorHtml(String initialHtml, String editorId) {
             } catch (error) {
               payload = null;
             }
+
           }
           if (payload && payload.editorId === editorId) {
             window.handleMessage(payload);
