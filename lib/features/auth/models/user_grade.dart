@@ -1,3 +1,6 @@
+// 파일 경로: lib/features/auth/models/user_grade.dart
+// 파일 설명: 회원 권한 및 라벨 정보를 담은 열거형.
+
 /// 회원 등급을 정의한 열거형.
 enum UserGrade {
   all('모두', 0),

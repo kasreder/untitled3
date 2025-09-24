@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 
+/// 특정 기능이 준비되지 않았을 때 안내 메시지를 보여주는 단순 페이지.
 class SimplePage extends StatelessWidget {
   const SimplePage({
     required this.message,
@@ -11,6 +12,7 @@ class SimplePage extends StatelessWidget {
 
   final String message;
 
+  /// 전달받은 메시지를 중앙 정렬 텍스트로 출력한다.
   @override
   Widget build(BuildContext context) {
     return Center(

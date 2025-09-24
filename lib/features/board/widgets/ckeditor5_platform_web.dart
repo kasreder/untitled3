@@ -1,3 +1,6 @@
+// 파일 경로: lib/features/board/widgets/ckeditor5_platform_web.dart
+// 파일 설명: 웹 환경에서 iframe 기반 CKEditor 5를 제공하는 구현.
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:html' as html;
@@ -7,6 +10,7 @@ import 'package:flutter/material.dart';
 
 import 'ckeditor5_platform_interface.dart' hide buildPlatformEditor;
 
+/// IFrameElement를 생성해 웹 전용 CKEditor 5를 렌더링합니다.
 Widget buildPlatformEditor({
   required double minHeight,
   required String initialHtml,
@@ -91,6 +95,7 @@ Widget buildPlatformEditor({
   );
 }
 
+/// iframe에 주입할 CKEditor 5 HTML 문자열을 생성합니다.
 String _buildEditorHtml(String initialHtml, String editorId) {
   final escapedInitial = jsonEncode(initialHtml);
   final escapedId = jsonEncode(editorId);

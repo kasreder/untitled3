@@ -1,3 +1,6 @@
+// 파일 경로: lib/features/board/widgets/ckeditor5_platform_io.dart
+// 파일 설명: 모바일/데스크톱에서 WebView 기반 CKEditor 5를 제공하는 구현.
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -6,6 +9,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import 'ckeditor5_platform_interface.dart' hide buildPlatformEditor;
 
+/// WebView를 생성해 CKEditor 5를 로드하고 콜백을 등록합니다.
 Widget buildPlatformEditor({
   required double minHeight,
   required String initialHtml,
@@ -67,6 +71,7 @@ Widget buildPlatformEditor({
   );
 }
 
+/// WebView에서 실행할 CKEditor 5 HTML 템플릿을 생성합니다.
 String _buildEditorHtml(String initialHtml) {
   final escapedInitial = jsonEncode(initialHtml);
   return '''

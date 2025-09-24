@@ -1,3 +1,6 @@
+// 파일 경로: lib/features/board/view/post_editor_page.dart
+// 파일 설명: 게시글 작성/수정 화면과 CKEditor 5 연동 로직을 포함한 위젯.
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -8,6 +11,7 @@ import '../controllers/board_controller.dart';
 import '../models/board_post.dart';
 import '../widgets/ckeditor5.dart';
 
+/// 게시글을 새로 작성하거나 기존 글을 수정하는 화면입니다.
 class PostEditorPage extends StatefulWidget {
   const PostEditorPage({
     this.initialPost,
@@ -16,12 +20,14 @@ class PostEditorPage extends StatefulWidget {
 
   final BoardPost? initialPost;
 
+  /// 초기 게시글 여부를 확인해 편집 모드인지 판별합니다.
   bool get isEditing => initialPost != null;
 
   @override
   State<PostEditorPage> createState() => _PostEditorPageState();
 }
 
+/// 게시글 작성 폼과 에디터 상태를 관리하는 State 클래스입니다.
 class _PostEditorPageState extends State<PostEditorPage> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _titleController;
@@ -45,6 +51,7 @@ class _PostEditorPageState extends State<PostEditorPage> {
     'assets/pics/9.webp',
   ];
 
+  /// 초기 데이터나 로그인 정보를 읽어 폼 컨트롤러를 설정합니다.
   @override
   void initState() {
     super.initState();
@@ -66,6 +73,7 @@ class _PostEditorPageState extends State<PostEditorPage> {
     }
   }
 
+  /// 화면 종료 시 컨트롤러 메모리를 해제합니다.
   @override
   void dispose() {
     _titleController.dispose();
@@ -74,6 +82,7 @@ class _PostEditorPageState extends State<PostEditorPage> {
     super.dispose();
   }
 
+  /// 게시글 입력 폼과 CKEditor를 배치합니다.
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.isEditing;
@@ -225,6 +234,7 @@ class _PostEditorPageState extends State<PostEditorPage> {
     );
   }
 
+  /// 폼 검증 후 신규 게시글을 생성하거나 기존 글을 업데이트합니다.
   Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -277,6 +287,7 @@ class _PostEditorPageState extends State<PostEditorPage> {
     }
   }
 
+  /// 본문에 선택된 이미지가 누락돼 있으면 `<figure>` 태그를 추가합니다.
   String _mergeAttachedImages(String html, List<String> images) {
     if (images.isEmpty) {
       return html;
@@ -295,6 +306,7 @@ class _PostEditorPageState extends State<PostEditorPage> {
   }
 }
 
+/// 이미지 경로를 작은 썸네일로 보여주는 위젯입니다.
 class _ImagePreview extends StatelessWidget {
   const _ImagePreview({
     required this.path,
@@ -304,6 +316,7 @@ class _ImagePreview extends StatelessWidget {
   final String path;
   final double size;
 
+  /// 자산 이미지를 사각형으로 잘라 표시합니다.
   @override
   Widget build(BuildContext context) {
     return ClipRRect(

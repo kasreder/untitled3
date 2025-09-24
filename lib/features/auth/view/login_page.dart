@@ -23,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _socialFormKey = GlobalKey<FormState>();
   final TextEditingController _socialEmailController = TextEditingController();
 
+  /// 화면 종료 시 모든 입력 컨트롤러를 정리한다.
   @override
   void dispose() {
     _localEmailController.dispose();
@@ -31,6 +32,7 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  /// 인증 컨트롤러 상태를 구독해 로그인 UI를 구성한다.
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthController>(
@@ -92,6 +94,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  /// 로컬 계정 로그인 폼을 렌더링하고 제출 이벤트를 처리한다.
   Widget _buildLocalLoginSection(
     BuildContext context,
     AuthController controller,
@@ -175,6 +178,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  /// 카카오·네이버 소셜 로그인을 위한 입력과 버튼을 제공한다.
   Widget _buildSocialLoginSection(
     BuildContext context,
     AuthController controller,
@@ -265,6 +269,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  /// 메타마스크 연결 안내와 서명 요청 버튼을 렌더링한다.
   Widget _buildMetamaskSection(
     BuildContext context,
     AuthController controller,
@@ -306,6 +311,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  /// 로그인 성공 후 회원·지갑 요약 정보를 보여준다.
   Widget _buildProfileOverview(
     BuildContext context,
     AuthController controller,
@@ -461,6 +467,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  /// 열거형을 한글 라벨로 변환해 보여준다.
   String _loginTypeLabel(LoginType type) {
     switch (type) {
       case LoginType.local:
@@ -472,6 +479,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  /// UTC/로컬 차이를 보정한 뒤 사용자 친화적인 문자열로 포맷한다.
   String _formatDate(DateTime dateTime) {
     final local = dateTime.toLocal();
     final year = local.year.toString().padLeft(4, '0');
@@ -483,6 +491,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
+/// 회원 프로필 정보를 행 형태로 표시하는 보조 위젯.
 class _ProfileTile extends StatelessWidget {
   const _ProfileTile({
     required this.icon,
@@ -494,6 +503,7 @@ class _ProfileTile extends StatelessWidget {
   final String title;
   final String value;
 
+  /// 아이콘과 텍스트로 항목을 구성한다.
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -526,6 +536,7 @@ class _ProfileTile extends StatelessWidget {
   }
 }
 
+/// 소셜 로그인 버튼을 테마에 맞춰 렌더링하는 위젯.
 class _SocialLoginButton extends StatelessWidget {
   const _SocialLoginButton({
     required this.label,
@@ -541,6 +552,7 @@ class _SocialLoginButton extends StatelessWidget {
   final Color foregroundColor;
   final VoidCallback? onPressed;
 
+  /// 카카오·네이버 스타일에 맞춘 버튼 모양을 구성한다.
   @override
   Widget build(BuildContext context) {
     return SizedBox(
