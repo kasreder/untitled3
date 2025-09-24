@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import 'package:untitled3/features/auth/controllers/auth_controller.dart';
+import 'package:untitled3/features/auth/models/user_grade.dart';
+
 import '../controllers/board_controller.dart';
 import '../data/board_repository.dart';
 import '../models/board_post.dart';
@@ -30,6 +33,15 @@ class _BoardView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final controller = context.watch<BoardController>();
+    final auth = context.watch<AuthController>();
+    final canChangeViewMode = auth.currentUser?.grade.isOperator ?? false;
+    if (!canChangeViewMode && controller.viewMode != BoardViewMode.list) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (controller.viewMode != BoardViewMode.list) {
+          controller.setViewMode(BoardViewMode.list);
+        }
+      });
+    }
     return Stack(
       children: [
         Padding(
@@ -37,7 +49,11 @@ class _BoardView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _BoardToolbar(controller: controller),
+              _BoardToolbar(
+                controller: controller,
+                canChangeViewMode: canChangeViewMode,
+                userGrade: auth.currentUser?.grade,
+              ),
               const SizedBox(height: 16),
               Expanded(
                 child: controller.isLoading
@@ -76,12 +92,20 @@ class _BoardView extends StatelessWidget {
 }
 
 class _BoardToolbar extends StatelessWidget {
-  const _BoardToolbar({required this.controller});
+  const _BoardToolbar({
+    required this.controller,
+    required this.canChangeViewMode,
+    this.userGrade,
+  });
 
   final BoardController controller;
+  final bool canChangeViewMode;
+  final UserGrade? userGrade;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final gradeLabel = userGrade?.label ?? UserGrade.all.label;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -96,28 +120,43 @@ class _BoardToolbar extends StatelessWidget {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             SegmentedButton<BoardViewMode>(
-              segments: const [
-                ButtonSegment<BoardViewMode>(
+              segments: [
+                const ButtonSegment<BoardViewMode>(
                   value: BoardViewMode.list,
                   icon: Icon(Icons.view_list_outlined),
                   label: Text('리스트'),
                 ),
                 ButtonSegment<BoardViewMode>(
                   value: BoardViewMode.gallery,
-                  icon: Icon(Icons.grid_view_rounded),
-                  label: Text('갤러리'),
+                  icon: const Icon(Icons.grid_view_rounded),
+                  label: const Text('갤러리'),
+                  enabled: canChangeViewMode,
                 ),
               ],
               selected: <BoardViewMode>{controller.viewMode},
-              onSelectionChanged: (selection) {
-                controller.setViewMode(selection.first);
-              },
+              onSelectionChanged: canChangeViewMode
+                  ? (selection) {
+                      controller.setViewMode(selection.first);
+                    }
+                  : null,
             ),
             const SizedBox(width: 12),
             Text(
               '총 ${controller.posts.length}건',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
+            Chip(
+              label: Text('등급: $gradeLabel'),
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+            ),
+            if (!canChangeViewMode)
+              Text(
+                '운영자 등급 이상만 보기 전환이 가능합니다.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.error,
+                ),
+              ),
           ],
         ),
       ],

@@ -2,6 +2,7 @@
 // 파일 설명: 로그인한 회원 프로필을 표현하는 불변 도메인 모델.
 
 import 'login_type.dart';
+import 'user_grade.dart';
 
 /// 인증·감사·콘텐츠 개인화에 필요한 메타데이터를 담은 플랫폼 회원 모델.
 class User {
@@ -13,6 +14,7 @@ class User {
     required this.encryptedPassword,
     required this.loginType,
     required this.nickname,
+    required this.grade,
     required this.points,
     required this.joinedAt,
     required this.updatedAt,
@@ -40,6 +42,9 @@ class User {
 
   /// 게시글에 표시되는 닉네임.
   final String nickname;
+
+  /// 회원 권한을 나타내는 등급.
+  final UserGrade grade;
 
   /// 회원의 현재 포인트 잔액.
   final int points;
@@ -83,6 +88,7 @@ class User {
     String? encryptedPassword,
     LoginType? loginType,
     String? nickname,
+    UserGrade? grade,
     int? points,
     DateTime? joinedAt,
     DateTime? updatedAt,
@@ -96,6 +102,7 @@ class User {
       encryptedPassword: encryptedPassword ?? this.encryptedPassword,
       loginType: loginType ?? this.loginType,
       nickname: nickname ?? this.nickname,
+      grade: grade ?? this.grade,
       points: points ?? this.points,
       joinedAt: joinedAt ?? this.joinedAt,
       updatedAt: updatedAt ?? this.updatedAt,

@@ -19,7 +19,29 @@ class BoardRepository {
     final posts = jsonMap['posts'] as List<dynamic>? ?? <dynamic>[];
     return [
       for (final post in posts)
-        BoardPost.fromJson(post as Map<String, dynamic>),
+        _embedImages(BoardPost.fromJson(post as Map<String, dynamic>)),
     ];
+  }
+
+  BoardPost _embedImages(BoardPost post) {
+    if (post.images.isEmpty) {
+      return post;
+    }
+    final content = post.content;
+    final buffer = StringBuffer(content.trim());
+    var modified = false;
+    for (final image in post.images) {
+      if (!content.contains(image)) {
+        if (buffer.isNotEmpty) {
+          buffer.write('\n');
+        }
+        buffer.write('<figure class="image"><img src="$image" alt="첨부 이미지" /></figure>');
+        modified = true;
+      }
+    }
+    if (!modified) {
+      return post;
+    }
+    return post.copyWith(content: buffer.toString());
   }
 }

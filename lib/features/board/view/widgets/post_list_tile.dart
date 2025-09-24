@@ -23,101 +23,65 @@ class PostListTile extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        child: SizedBox(
-          height: 150,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              AspectRatio(
-                aspectRatio: 4 / 3,
-                child: _PostImage(path: post.coverImage),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        post.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Expanded(
-                        child: Text(
-                          post.summary.isEmpty ? '상세 내용을 확인해보세요.' : post.summary,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 8,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          _InfoChip(
-                            icon: Icons.person_outline,
-                            label: post.nickname,
-                          ),
-                          _InfoChip(
-                            icon: Icons.schedule_outlined,
-                            label: formattedDate,
-                          ),
-                          _InfoChip(
-                            icon: Icons.remove_red_eye_outlined,
-                            label: '${post.views}',
-                          ),
-                          _InfoChip(
-                            icon: Icons.thumb_up_outlined,
-                            label: '${post.likes}',
-                          ),
-                          _InfoChip(
-                            icon: Icons.thumb_down_outlined,
-                            label: '${post.dislikes}',
-                          ),
-                          _InfoChip(
-                            icon: Icons.chat_bubble_outline,
-                            label: '${countComments(post.comments)}',
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+              Text(
+                post.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
                 ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                post.summary.isEmpty ? '상세 내용을 확인해보세요.' : post.summary,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 12,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  _InfoChip(
+                    icon: Icons.person_outline,
+                    label: post.nickname,
+                  ),
+                  _InfoChip(
+                    icon: Icons.schedule_outlined,
+                    label: formattedDate,
+                  ),
+                  _InfoChip(
+                    icon: Icons.remove_red_eye_outlined,
+                    label: '${post.views}',
+                  ),
+                  _InfoChip(
+                    icon: Icons.thumb_up_outlined,
+                    label: '${post.likes}',
+                  ),
+                  _InfoChip(
+                    icon: Icons.thumb_down_outlined,
+                    label: '${post.dislikes}',
+                  ),
+                  _InfoChip(
+                    icon: Icons.chat_bubble_outline,
+                    label: '${countComments(post.comments)}',
+                  ),
+                ],
               ),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class _PostImage extends StatelessWidget {
-  const _PostImage({required this.path});
-
-  final String path;
-
-  @override
-  Widget build(BuildContext context) {
-    return Image.asset(
-      path,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) {
-        return Container(
-          color: Theme.of(context).colorScheme.surfaceVariant,
-          alignment: Alignment.center,
-          child: const Icon(Icons.broken_image_outlined, size: 32),
-        );
-      },
     );
   }
 }

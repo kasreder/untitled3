@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
+import 'package:untitled3/features/auth/controllers/auth_controller.dart';
+
 import '../controllers/board_controller.dart';
 import '../models/board_post.dart';
 import '../widgets/ckeditor5.dart';
@@ -23,11 +25,12 @@ class PostEditorPage extends StatefulWidget {
 class _PostEditorPageState extends State<PostEditorPage> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _titleController;
-  late final TextEditingController _nicknameController;
   late final TextEditingController _summaryController;
   late final Ckeditor5Controller _contentController;
   late String _coverImage;
   late List<String> _selectedImages;
+  late final String _authorNickname;
+  late final String _authorGradeLabel;
 
   static const List<String> _availableImages = [
     'assets/pics/1.jpg',
@@ -46,10 +49,16 @@ class _PostEditorPageState extends State<PostEditorPage> {
   void initState() {
     super.initState();
     final initial = widget.initialPost;
+    final auth = context.read<AuthController>();
     _titleController = TextEditingController(text: initial?.title ?? '');
-    _nicknameController = TextEditingController(text: initial?.nickname ?? '');
     _summaryController = TextEditingController(text: initial?.summary ?? '');
-    _contentController = Ckeditor5Controller(initialHtml: initial?.content ?? '');
+    _authorNickname = initial?.nickname ?? auth.currentUser?.nickname ?? '익명 회원';
+    _authorGradeLabel = auth.currentUser?.grade.label ?? '모두';
+    final mergedInitialHtml = _mergeAttachedImages(
+      initial?.content ?? '',
+      initial?.images ?? const <String>[],
+    );
+    _contentController = Ckeditor5Controller(initialHtml: mergedInitialHtml);
     _coverImage = initial?.coverImage ?? _availableImages.first;
     _selectedImages = List<String>.from(initial?.images ?? <String>[]);
     if (!_selectedImages.contains(_coverImage)) {
@@ -60,7 +69,6 @@ class _PostEditorPageState extends State<PostEditorPage> {
   @override
   void dispose() {
     _titleController.dispose();
-    _nicknameController.dispose();
     _summaryController.dispose();
     _contentController.dispose();
     super.dispose();
@@ -69,6 +77,7 @@ class _PostEditorPageState extends State<PostEditorPage> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.isEditing;
+    final gradeLabel = context.watch<AuthController>().currentUser?.grade.label ?? _authorGradeLabel;
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? '게시글 수정' : '새 게시글 작성'),
@@ -92,18 +101,27 @@ class _PostEditorPageState extends State<PostEditorPage> {
               },
             ),
             const SizedBox(height: 16),
-            TextFormField(
-              controller: _nicknameController,
+            InputDecorator(
               decoration: const InputDecoration(
-                labelText: '작성자 닉네임',
+                labelText: '작성자',
                 border: OutlineInputBorder(),
               ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return '닉네임을 입력해 주세요.';
-                }
-                return null;
-              },
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _authorNickname,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Chip(
+                    label: Text(gradeLabel),
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -163,10 +181,12 @@ class _PostEditorPageState extends State<PostEditorPage> {
                     label: Text(path.split('/').last),
                     avatar: _ImagePreview(path: path, size: 24),
                     selected: _selectedImages.contains(path),
-                    onSelected: (selected) {
+                    onSelected: (selected) async {
                       setState(() {
                         if (selected) {
-                          _selectedImages.add(path);
+                          if (!_selectedImages.contains(path)) {
+                            _selectedImages.add(path);
+                          }
                         } else {
                           if (path == _coverImage) {
                             return;
@@ -174,6 +194,11 @@ class _PostEditorPageState extends State<PostEditorPage> {
                           _selectedImages.remove(path);
                         }
                       });
+                      if (selected) {
+                        final html = await _contentController.getHtml();
+                        final updated = _mergeAttachedImages(html, [path]);
+                        await _contentController.setHtml(updated);
+                      }
                     },
                   ),
               ],
@@ -216,14 +241,15 @@ class _PostEditorPageState extends State<PostEditorPage> {
       return;
     }
     final now = DateTime.now();
-    final images = <String>{..._selectedImages, _coverImage}.toList();
+    final images = <String>{_coverImage, ..._selectedImages}.toList();
+    final contentWithImages = _mergeAttachedImages(html, images);
     if (widget.initialPost == null) {
       final newPost = BoardPost(
         id: const Uuid().v4(),
         title: _titleController.text.trim(),
-        nickname: _nicknameController.text.trim(),
+        nickname: _authorNickname,
         summary: _summaryController.text.trim(),
-        content: html,
+        content: contentWithImages,
         coverImage: _coverImage,
         createdAt: now,
         updatedAt: now,
@@ -237,9 +263,9 @@ class _PostEditorPageState extends State<PostEditorPage> {
     } else {
       final updated = widget.initialPost!.copyWith(
         title: _titleController.text.trim(),
-        nickname: _nicknameController.text.trim(),
+        nickname: _authorNickname,
         summary: _summaryController.text.trim(),
-        content: html,
+        content: contentWithImages,
         coverImage: _coverImage,
         images: images,
         updatedAt: now,
@@ -249,6 +275,23 @@ class _PostEditorPageState extends State<PostEditorPage> {
     if (mounted) {
       Navigator.of(context).pop();
     }
+  }
+
+  String _mergeAttachedImages(String html, List<String> images) {
+    if (images.isEmpty) {
+      return html;
+    }
+    final buffer = StringBuffer(html.trim());
+    final original = html;
+    for (final image in images) {
+      if (!original.contains(image)) {
+        if (buffer.isNotEmpty) {
+          buffer.write('\n');
+        }
+        buffer.write('<figure class="image"><img src="$image" alt="첨부 이미지" /></figure>');
+      }
+    }
+    return buffer.toString();
   }
 }
 
