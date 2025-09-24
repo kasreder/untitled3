@@ -26,7 +26,6 @@ class PostEditorPage extends StatefulWidget {
   });
 
   final String? postId;
-
   @override
   State<PostEditorPage> createState() => _PostEditorPageState();
 }
@@ -45,7 +44,26 @@ class _PostEditorPageState extends State<PostEditorPage> {
   String _content = '';
 
   bool get _isEditing => widget.postId != null;
+=======
+  late final TextEditingController _titleController;
+  late final TextEditingController _nicknameController;
+  late final TextEditingController _summaryController;
+  late final Ckeditor5Controller _contentController;
+  late String _coverImage;
+  late List<String> _selectedImages;
 
+  static const List<String> _availableImages = [
+    'assets/pics/1.jpg',
+    'assets/pics/2.jpg',
+    'assets/pics/3.png',
+    'assets/pics/4.gif',
+    'assets/pics/5.jpg',
+    'assets/pics/5.webp',
+    'assets/pics/6.jpeg',
+    'assets/pics/7.jpeg',
+    'assets/pics/8.webp',
+    'assets/pics/9.webp',
+  ];
   @override
   void initState() {
     super.initState();
@@ -283,5 +301,6 @@ class _PostEditorPageState extends State<PostEditorPage> {
       _controller.addPost(newPost);
       context.go('/free/post/$newId');
     }
+
   }
 }

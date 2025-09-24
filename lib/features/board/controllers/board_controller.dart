@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-
 import '../data/asset_user_post_repository.dart';
 import '../models/post_comment.dart';
 import '../models/user_post.dart';
@@ -94,6 +93,7 @@ class BoardController extends ChangeNotifier {
     } else {
       updatePost(post.copyWith(dislikes: post.dislikes + 1));
     }
+
   }
 
   void addComment(
