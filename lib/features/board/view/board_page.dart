@@ -16,7 +16,7 @@ class BoardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<BoardController>(
-      create: (_) => BoardController(repository: const BoardRepository())
+      create: (_) => BoardController(repository: BoardRepository())
         ..loadInitialPosts(),
       child: const _BoardView(),
     );

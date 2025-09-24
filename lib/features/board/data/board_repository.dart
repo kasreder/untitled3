@@ -5,10 +5,10 @@ import 'package:flutter/services.dart';
 import '../models/board_post.dart';
 
 class BoardRepository {
-  const BoardRepository({
+  BoardRepository({
     this.assetPath = 'assets/data/free_board.json',
-    this.bundle = rootBundle,
-  });
+    AssetBundle? bundle,
+  }) : bundle = bundle ?? rootBundle;
 
   final String assetPath;
   final AssetBundle bundle;
