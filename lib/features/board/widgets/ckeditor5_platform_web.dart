@@ -135,6 +135,39 @@ String _buildEditorHtml(String initialHtml, String editorId) {
     ClassicEditor.create(document.querySelector('#editor'), {
       toolbar: {
         shouldNotGroupWhenFull: true
+      },
+      image: {
+        resizeUnit: '%',
+        resizeOptions: [
+          {
+            name: 'resizeImage:original',
+            label: 'Original',
+            value: null
+          },
+          {
+            name: 'resizeImage:25',
+            label: '25%',
+            value: '25'
+          },
+          {
+            name: 'resizeImage:50',
+            label: '50%',
+            value: '50'
+          },
+          {
+            name: 'resizeImage:75',
+            label: '75%',
+            value: '75'
+          }
+        ],
+        toolbar: [
+          'imageStyle:inline',
+          'imageStyle:block',
+          'imageStyle:side',
+          '|',
+          'resizeImage',
+          'imageTextAlternative'
+        ]
       }
     }).then(editor => {
       editorInstance = editor;
