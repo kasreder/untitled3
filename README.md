@@ -29,6 +29,26 @@ lib/
 │   │   │   └── metamask_connector.dart
 │   │   └── view/
 │   │       └── login_page.dart
+│   ├── board/
+│   │   ├── controllers/
+│   │   │   └── board_controller.dart
+│   │   ├── data/
+│   │   │   └── board_repository.dart
+│   │   ├── models/
+│   │   │   ├── board_comment.dart
+│   │   │   └── board_post.dart
+│   │   ├── view/
+│   │   │   ├── board_page.dart
+│   │   │   ├── post_detail_page.dart
+│   │   │   └── post_editor_page.dart
+│   │   └── widgets/
+│   │       ├── ckeditor5.dart
+│   │       ├── ckeditor5_platform_io.dart
+│   │       ├── ckeditor5_platform_interface.dart
+│   │       ├── ckeditor5_platform_web.dart
+│   │       ├── comment_utils.dart
+│   │       ├── post_gallery_tile.dart
+│   │       └── post_list_tile.dart
 │   └── simple_page/
 │       └── simple_page.dart
 └── main.dart
@@ -43,7 +63,19 @@ lib/
   - `router/`: `GoRouter` 구성을 담당합니다.
 - **lib/features**: 실제 화면(Feature)을 모듈 단위로 관리합니다.
   - `auth/`: 로그인, 사용자/지갑 더미 데이터, 암호화 서비스를 포함하는 인증 모듈입니다.
+  - `board/`: 자유 게시판 기능(리스트/갤러리 전환, CKEditor 5 기반 에디터, 댓글/대댓글, 좋아요·싫어요·공유)을 제공합니다.
   - `simple_page/`: 개발 중인 메뉴를 대신 보여주는 플레이스홀더 화면입니다.
+
+## 자유 게시판 데이터
+
+- 초기 게시글 20건은 `assets/data/free_board.json`에 JSON 형식으로 저장되어 있으며, 앱 시작 시 로딩됩니다.
+- 게시글 본문은 CKEditor 5에서 생성한 HTML을 그대로 저장합니다. `assets/pics` 폴더에 포함된 이미지 리소스를 커버 및 첨부 이미지로 활용합니다.
+
+## CKEditor 5 통합
+
+- `lib/features/board/widgets/ckeditor5.dart`는 웹에서는 `HtmlElementView` + `iframe`, 모바일/데스크톱에서는 `webview_flutter`를 사용해 CKEditor 5 클래식 에디터를 임베드합니다.
+- Flutter ↔️ CKEditor 간 양방향 통신은 `window.postMessage`와 `JavaScriptChannel`을 통해 구현했습니다. 본문 변경 시 실시간으로 Flutter 상태가 갱신됩니다.
+- CKEditor 5 소스는 `lib/util/editor` 디렉터리에 포함되어 있으며, 현재는 CDN 번들을 사용하지만 추후 자체 빌드로 대체할 수 있습니다.
 
 ## Database Schema (Draft)
 
@@ -80,7 +112,15 @@ lib/
 | --- | --- | --- | --- |
 | `id` | BIGINT | PK | 게시글 ID |
 | `user_id` | CHAR(12) | FK(`users.id`) | 작성자 |
+| `nickname_snapshot` | VARCHAR(30) | NOT NULL | 게시 당시 닉네임 |
 | `title` | VARCHAR(200) | NOT NULL | 게시글 제목 |
+| `summary` | VARCHAR(280) | NULL | 리스트/갤러리용 요약 |
+| `content_html` | MEDIUMTEXT | NOT NULL | CKEditor 5 HTML 본문 |
+| `cover_image_path` | VARCHAR(120) | NULL | 대표 이미지 경로 |
+| `attachment_json` | JSON | NULL | 첨부 이미지/파일 메타데이터 |
+| `view_count` | INT | DEFAULT 0 | 조회수 |
+| `like_count` | INT | DEFAULT 0 | 좋아요 수 |
+| `dislike_count` | INT | DEFAULT 0 | 싫어요 수 |
 | `created_at` | DATETIME | NOT NULL | 작성 시각 |
 | `updated_at` | DATETIME | NOT NULL | 수정 시각 |
 
