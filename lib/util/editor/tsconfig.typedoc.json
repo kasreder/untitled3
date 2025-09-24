@@ -1,0 +1,29 @@
+/*
+ * The configuration used when preparing API docs using typedoc.
+ */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "ckeditor5": [
+        "./"
+      ],
+      "ckeditor5-collaboration": [
+        "../../packages/ckeditor5-collaboration"
+      ],
+      "@ckeditor/*": [
+        "packages/*",
+        "../../packages/*"
+      ]
+    }
+  },
+  "include": [
+    "./packages/*/src/**/*.ts",
+    "../../packages/*/src/**/*.ts",
+    "./typings/"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
