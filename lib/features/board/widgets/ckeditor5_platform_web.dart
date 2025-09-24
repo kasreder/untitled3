@@ -104,7 +104,7 @@ String _buildEditorHtml(String initialHtml, String editorId) {
     body { margin: 0; padding: 0; background: transparent; }
     #editor { min-height: 280px; }
   </style>
-  <script src="https://cdn.ckeditor.com/ckeditor5/41.2.0/classic/ckeditor.js"></script>
+  <script src="https://cdn.ckeditor.com/ckeditor5/41.2.0/super-build/ckeditor.js"></script>
 </head>
 <body>
   <div id="editor"></div>
@@ -132,10 +132,74 @@ String _buildEditorHtml(String initialHtml, String editorId) {
       return null;
     };
 
-    ClassicEditor.create(document.querySelector('#editor'), {
+    CKEDITOR.ClassicEditor.create(document.querySelector('#editor'), {
       toolbar: {
+        items: [
+          'undo', 'redo',
+          '|', 'heading',
+          '|', 'bold', 'italic', 'underline', 'strikethrough', 'link',
+          '|', 'bulletedList', 'numberedList', 'outdent', 'indent',
+          '|', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock',
+          '|', 'horizontalLine', 'removeFormat'
+        ],
         shouldNotGroupWhenFull: true
-      }
+      },
+      image: {
+        resizeOptions: [
+          {
+            name: 'resizeImage:original',
+            label: '원본',
+            value: null
+          },
+          {
+            name: 'resizeImage:75',
+            label: '75%',
+            value: '75'
+          },
+          {
+            name: 'resizeImage:50',
+            label: '50%',
+            value: '50'
+          },
+          {
+            name: 'resizeImage:25',
+            label: '25%',
+            value: '25'
+          }
+        ],
+        toolbar: [
+          'toggleImageCaption',
+          'imageTextAlternative',
+          '|',
+          'imageStyle:inline',
+          'imageStyle:block',
+          'imageStyle:side',
+          '|',
+          'resizeImage'
+        ]
+      },
+      removePlugins: [
+        'CKBox',
+        'CKFinder',
+        'EasyImage',
+        'RealTimeCollaborativeComments',
+        'RealTimeCollaborativeTrackChanges',
+        'RealTimeCollaborativeRevisionHistory',
+        'PresenceList',
+        'Comments',
+        'TrackChanges',
+        'TrackChangesData',
+        'RevisionHistory',
+        'Pagination',
+        'WProofreader',
+        'MathType',
+        'SlashCommand',
+        'Template',
+        'DocumentOutline',
+        'FormatPainter',
+        'TableOfContents',
+        'PasteFromOfficeEnhanced'
+      ]
     }).then(editor => {
       editorInstance = editor;
       editor.model.document.on('change:data', () => {
