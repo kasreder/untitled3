@@ -25,7 +25,15 @@ class NavigationController extends ChangeNotifier {
     }
     _location = location;
     final matchIndex = appDestinations.indexWhere(
-      (destination) => destination.location == location,
+      (destination) {
+        if (destination.location == location) {
+          return true;
+        }
+        if (destination.location == '/') {
+          return false;
+        }
+        return location.startsWith('${destination.location}/');
+      },
     );
     if (matchIndex != -1 && matchIndex != _selectedIndex) {
       _selectedIndex = matchIndex;

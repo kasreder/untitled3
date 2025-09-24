@@ -84,7 +84,15 @@ class AdaptiveNavigationShell extends StatelessWidget {
 
   String _titleForRoute(String location) {
     final match = appDestinations.firstWhere(
-      (destination) => destination.location == location,
+      (destination) {
+        if (destination.location == location) {
+          return true;
+        }
+        if (destination.location == '/') {
+          return false;
+        }
+        return location.startsWith('${destination.location}/');
+      },
       orElse: () => appDestinations.first,
     );
     return match.label;

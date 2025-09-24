@@ -9,6 +9,8 @@ import 'package:untitled3/features/auth/controllers/auth_controller.dart';
 import 'package:untitled3/features/auth/data/dummy_user_repository.dart';
 import 'package:untitled3/features/auth/services/crypto_service.dart';
 import 'package:untitled3/features/auth/services/metamask_connector.dart';
+import 'package:untitled3/features/board/controllers/board_controller.dart';
+import 'package:untitled3/features/board/data/asset_user_post_repository.dart';
 import 'navigation/navigation_controller.dart';
 import 'router/app_router.dart';
 
@@ -37,6 +39,9 @@ class _AppRootState extends State<AppRoot> {
         Provider<MetamaskConnector>(
           create: (_) => MetamaskConnector.secure(),
         ),
+        Provider<UserPostRepository>(
+          create: (_) => AssetUserPostRepository(),
+        ),
         ChangeNotifierProvider<NavigationController>(
           create: (_) => NavigationController(),
         ),
@@ -44,6 +49,11 @@ class _AppRootState extends State<AppRoot> {
           create: (context) => AuthController(
             userRepository: context.read<DummyUserRepository>(),
             metamaskConnector: context.read<MetamaskConnector>(),
+          ),
+        ),
+        ChangeNotifierProvider<BoardController>(
+          create: (context) => BoardController(
+            repository: context.read<UserPostRepository>(),
           ),
         ),
       ],
