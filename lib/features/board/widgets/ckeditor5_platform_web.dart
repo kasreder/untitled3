@@ -104,7 +104,7 @@ String _buildEditorHtml(String initialHtml, String editorId) {
     body { margin: 0; padding: 0; background: transparent; }
     #editor { min-height: 280px; }
   </style>
-  <script src="https://cdn.ckeditor.com/ckeditor5/41.2.0/classic/ckeditor.js"></script>
+  <script src="https://cdn.ckeditor.com/ckeditor5/41.2.1/super-build/ckeditor.js"></script>
 </head>
 <body>
   <div id="editor"></div>
@@ -132,66 +132,102 @@ String _buildEditorHtml(String initialHtml, String editorId) {
       return null;
     };
 
-    ClassicEditor.create(document.querySelector('#editor'), {
-      toolbar: {
-        shouldNotGroupWhenFull: true
-      },
-      image: {
-        resizeUnit: '%',
-        resizeOptions: [
-          {
-            name: 'resizeImage:original',
-            label: 'Original',
-            value: null
-          },
-          {
-            name: 'resizeImage:25',
-            label: '25%',
-            value: '25'
-          },
-          {
-            name: 'resizeImage:50',
-            label: '50%',
-            value: '50'
-          },
-          {
-            name: 'resizeImage:75',
-            label: '75%',
-            value: '75'
-          }
-        ],
-        toolbar: [
-          'imageStyle:inline',
-          'imageStyle:block',
-          'imageStyle:side',
-          '|',
-          'resizeImage',
-          'imageTextAlternative'
+    const classicEditorConstructor = window.CKEDITOR && window.CKEDITOR.ClassicEditor;
+    if (!classicEditorConstructor) {
+      console.error('CKEditor super build is not available.');
+    } else {
+      classicEditorConstructor.create(document.querySelector('#editor'), {
+        toolbar: {
+          items: [
+            'heading',
+            '|',
+            'bold',
+            'italic',
+            'underline',
+            'strikethrough',
+            '|',
+            'bulletedList',
+            'numberedList',
+            '|',
+            'outdent',
+            'indent',
+            '|',
+            'link',
+            'blockQuote',
+            'insertTable',
+            'mediaEmbed',
+            '|',
+            'undo',
+            'redo'
+          ],
+          shouldNotGroupWhenFull: true
+        },
+        image: {
+          resizeUnit: '%',
+          resizeOptions: [
+            {
+              name: 'resizeImage:original',
+              label: 'Original',
+              value: null
+            },
+            {
+              name: 'resizeImage:25',
+              label: '25%',
+              value: '25'
+            },
+            {
+              name: 'resizeImage:50',
+              label: '50%',
+              value: '50'
+            },
+            {
+              name: 'resizeImage:75',
+              label: '75%',
+              value: '75'
+            }
+          ],
+          toolbar: [
+            'toggleImageCaption',
+            'imageTextAlternative',
+            '|',
+            'imageStyle:inline',
+            'imageStyle:block',
+            'imageStyle:side',
+            '|',
+            'resizeImage'
+          ]
+        },
+        removePlugins: [
+          'AIAssistant',
+          'CKBox',
+          'CKFinder',
+          'EasyImage'
         ]
-      }
-    }).then(editor => {
-      editorInstance = editor;
-      editor.model.document.on('change:data', () => {
-        postMessage({ type: 'change', data: editor.getData() });
-      });
-      editor.setData(${escapedInitial} || '');
-      postMessage({ type: 'ready' });
-      window.addEventListener('message', event => {
-        let payload = event.data;
-        if (typeof payload === 'string') {
-          try {
-            payload = JSON.parse(payload);
-          } catch (error) {
-            payload = null;
+      }).then(editor => {
+        editorInstance = editor;
+        editor.model.document.on('change:data', () => {
+          postMessage({ type: 'change', data: editor.getData() });
+        });
+        editor.setData(${escapedInitial} || '');
+        postMessage({ type: 'ready' });
+        window.addEventListener('message', event => {
+          let payload = event.data;
+          if (typeof payload === 'string') {
+            try {
+              payload = JSON.parse(payload);
+            } catch (error) {
+              payload = null;
+            }
+
           }
-        }
-        if (payload && payload.editorId === editorId) {
-          window.handleMessage(payload);
-        }
+          if (payload && payload.editorId === editorId) {
+            window.handleMessage(payload);
+          }
+        });
+      }).catch(error => {
+        console.error(error);
       });
-    }).catch(error => {
-      console.error(error);
-    });
+    }
   </script>
 </body>
 </html>
