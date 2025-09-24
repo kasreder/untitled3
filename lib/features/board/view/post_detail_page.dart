@@ -1,3 +1,6 @@
+// 파일 경로: lib/features/board/view/post_detail_page.dart
+// 파일 설명: 게시글 상세 화면과 댓글 쓰레드를 렌더링하는 위젯을 정의.
+
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +13,7 @@ import '../models/board_post.dart';
 import '../widgets/comment_utils.dart';
 import 'post_editor_page.dart';
 
+/// 게시글 본문과 통계, 댓글을 보여주는 상세 화면입니다.
 class PostDetailPage extends StatelessWidget {
   const PostDetailPage({
     required this.postId,
@@ -18,6 +22,7 @@ class PostDetailPage extends StatelessWidget {
 
   final String postId;
 
+  /// 게시글 정보를 찾아 화면을 구성합니다.
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<BoardController>();
@@ -145,11 +150,13 @@ class PostDetailPage extends StatelessWidget {
     );
   }
 
+  /// 공유하기 버튼 눌렀을 때 SNS로 텍스트를 전송합니다.
   void _sharePost(BoardPost post) {
     final url = 'https://cheongrok.community/posts/${post.id}';
     Share.share('${post.shareMessage}\n$url');
   }
 
+  /// 게시글 수정 화면으로 이동합니다.
   Future<void> _editPost(
     BuildContext context,
     BoardController controller,
@@ -165,6 +172,7 @@ class PostDetailPage extends StatelessWidget {
     );
   }
 
+  /// 삭제 확인 모달을 띄우고 승인 시 게시글을 제거합니다.
   Future<void> _deletePost(
     BuildContext context,
     BoardController controller,
@@ -191,6 +199,7 @@ class PostDetailPage extends StatelessWidget {
   }
 }
 
+/// 게시글 메타데이터를 아이콘과 함께 보여주는 작은 배지입니다.
 class _MetaChip extends StatelessWidget {
   const _MetaChip({
     required this.icon,
@@ -200,6 +209,7 @@ class _MetaChip extends StatelessWidget {
   final IconData icon;
   final String label;
 
+  /// 간결한 아이콘+텍스트 조합을 렌더링합니다.
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -213,6 +223,7 @@ class _MetaChip extends StatelessWidget {
   }
 }
 
+/// 댓글 입력, 목록, 답글 기능을 포함한 섹션입니다.
 class CommentSection extends StatefulWidget {
   const CommentSection({
     required this.postId,
@@ -227,6 +238,7 @@ class CommentSection extends StatefulWidget {
   State<CommentSection> createState() => _CommentSectionState();
 }
 
+/// 댓글 입력 폼과 쓰레드 리스트를 관리하는 상태 클래스입니다.
 class _CommentSectionState extends State<CommentSection> {
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
@@ -239,6 +251,7 @@ class _CommentSectionState extends State<CommentSection> {
     super.dispose();
   }
 
+  /// 댓글 수, 입력 폼, 쓰레드를 순서대로 렌더링합니다.
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<BoardController>();
@@ -311,6 +324,7 @@ class _CommentSectionState extends State<CommentSection> {
     );
   }
 
+  /// 폼 검증 후 댓글 또는 답글을 저장소에 추가합니다.
   Future<void> _submitComment(BoardController controller) async {
     final nickname = _nicknameController.text.trim();
     final content = _contentController.text.trim();
@@ -337,6 +351,7 @@ class _CommentSectionState extends State<CommentSection> {
     });
   }
 
+  /// 삭제 확인 후 지정된 댓글을 제거합니다.
   Future<void> _deleteComment(
     BuildContext context,
     BoardController controller,
@@ -362,6 +377,7 @@ class _CommentSectionState extends State<CommentSection> {
   }
 }
 
+/// 댓글 리스트를 재귀적으로 펼쳐서 보여주는 위젯입니다.
 class _CommentThread extends StatelessWidget {
   const _CommentThread({
     required this.comments,
@@ -375,6 +391,7 @@ class _CommentThread extends StatelessWidget {
   final ValueChanged<BoardComment> onDelete;
   final DateFormat dateFormat;
 
+  /// 댓글이 비어 있는 경우 안내 문구를, 아니면 댓글 타일 목록을 렌더링합니다.
   @override
   Widget build(BuildContext context) {
     if (comments.isEmpty) {
@@ -395,6 +412,7 @@ class _CommentThread extends StatelessWidget {
   }
 }
 
+/// 단일 댓글과 하위 답글을 표현하는 위젯입니다.
 class _CommentTile extends StatelessWidget {
   const _CommentTile({
     required this.comment,
@@ -410,6 +428,7 @@ class _CommentTile extends StatelessWidget {
   final DateFormat dateFormat;
   final int depth;
 
+  /// 댓글 닉네임, 작성 시각, 본문, 동작 버튼을 차례로 보여줍니다.
   @override
   Widget build(BuildContext context) {
     final indent = depth * 16.0;

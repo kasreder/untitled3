@@ -109,6 +109,7 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 인증 절차 공통 영역에서 로딩/에러 상태를 관리합니다.
   Future<void> _guardedExecution(Future<void> Function() action) async {
     _isLoading = true;
     _errorMessage = null;
@@ -125,6 +126,7 @@ class AuthController extends ChangeNotifier {
     }
   }
 
+  /// 사용자 정보, 지갑, 내가 쓴 글 캐시를 한 번에 로드합니다.
   Future<void> _hydrateSession(User user, {String? walletAddress}) async {
     _currentUser = user;
     _currentWallet = await _userRepository.fetchWallet(user.id);

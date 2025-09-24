@@ -5,6 +5,7 @@ import 'package:untitled3/features/auth/view/login_page.dart';
 import 'package:untitled3/features/board/view/board_page.dart';
 import 'package:untitled3/features/simple_page/simple_page.dart';
 
+/// 내비게이션 바에 노출되는 목적지 정보를 표현하는 데이터 클래스.
 class AppDestination {
   const AppDestination({
     required this.location,
@@ -21,6 +22,7 @@ class AppDestination {
   final WidgetBuilder builder;
 }
 
+/// 앱 전역에서 사용되는 목적지 목록이다.
 final List<AppDestination> appDestinations = [
   AppDestination(
     location: '/',

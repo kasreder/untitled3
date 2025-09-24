@@ -8,6 +8,7 @@ import 'package:untitled3/features/auth/controllers/auth_controller.dart';
 import 'app_destinations.dart';
 import 'navigation_controller.dart';
 
+/// 화면 크기에 따라 내비게이션 패턴을 전환하는 껍데기 위젯입니다.
 class AdaptiveNavigationShell extends StatelessWidget {
   const AdaptiveNavigationShell({
     required this.state,
@@ -20,6 +21,7 @@ class AdaptiveNavigationShell extends StatelessWidget {
 
   static const double _navigationBreakpoint = 650;
 
+  /// 현재 라우트와 화면 폭을 고려해 적절한 내비게이션 UI를 결정합니다.
   @override
   Widget build(BuildContext context) {
     final navigation = context.watch<NavigationController>();
@@ -82,6 +84,7 @@ class AdaptiveNavigationShell extends StatelessWidget {
     );
   }
 
+  /// 현재 라우트에 해당하는 목적지 레이블을 반환합니다.
   String _titleForRoute(String location) {
     final match = appDestinations.firstWhere(
       (destination) => destination.location == location,
@@ -91,6 +94,7 @@ class AdaptiveNavigationShell extends StatelessWidget {
   }
 }
 
+/// 데스크톱·태블릿에서 사용할 사이드 드로어입니다.
 class AppDrawer extends StatelessWidget {
   const AppDrawer({
     required this.currentIndex,
@@ -103,6 +107,7 @@ class AppDrawer extends StatelessWidget {
   final AuthController authController;
   final ValueChanged<int> onDestinationSelected;
 
+  /// 목적지 목록을 드로어 항목으로 렌더링합니다.
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -150,6 +155,7 @@ class AppDrawer extends StatelessWidget {
   }
 }
 
+/// 목적지를 선택했을 때 라우터와 상태를 함께 갱신합니다.
 void _handleDestinationSelection(
   BuildContext context,
   NavigationController controller,
@@ -167,6 +173,7 @@ void _handleDestinationSelection(
   context.go(destination.location);
 }
 
+/// 로그인 상태에 따라 아이콘을 동적으로 변경합니다.
 IconData _iconForDestination(AppDestination destination, AuthController authController) {
   if (destination.name == 'login' && authController.currentUser != null) {
     return Icons.logout;
@@ -174,6 +181,7 @@ IconData _iconForDestination(AppDestination destination, AuthController authCont
   return destination.icon;
 }
 
+/// 로그인 여부에 따라 메뉴 라벨을 조정합니다.
 String _labelForDestination(AppDestination destination, AuthController authController) {
   if (destination.name == 'login' && authController.currentUser != null) {
     return '로그아웃';

@@ -1,3 +1,6 @@
+// 파일 경로: lib/features/board/view/board_page.dart
+// 파일 설명: 자유 게시판 메인 화면과 리스트/갤러리 UI를 구성하는 위젯 모음.
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -13,9 +16,11 @@ import 'post_editor_page.dart';
 import 'widgets/post_gallery_tile.dart';
 import 'widgets/post_list_tile.dart';
 
+/// 자유 게시판 루트 화면을 정의하는 위젯입니다.
 class BoardPage extends StatelessWidget {
   const BoardPage({super.key});
 
+  /// 게시판 상태를 제공하고 최초 데이터를 로드합니다.
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<BoardController>(
@@ -26,9 +31,11 @@ class BoardPage extends StatelessWidget {
   }
 }
 
+/// 게시판 콘텐츠와 툴바, 작성 버튼을 그리는 내부 위젯입니다.
 class _BoardView extends StatelessWidget {
   const _BoardView();
 
+  /// 로그인 등급에 따라 보기 모드를 제어하고 화면을 렌더링합니다.
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -78,6 +85,7 @@ class _BoardView extends StatelessWidget {
     );
   }
 
+  /// 새 글 작성 화면으로 이동합니다.
   void _openEditor(BuildContext context) {
     final controller = context.read<BoardController>();
     Navigator.of(context).push(
@@ -91,6 +99,7 @@ class _BoardView extends StatelessWidget {
   }
 }
 
+/// 게시판 상단 툴바(보기 모드, 통계)를 렌더링합니다.
 class _BoardToolbar extends StatelessWidget {
   const _BoardToolbar({
     required this.controller,
@@ -102,6 +111,7 @@ class _BoardToolbar extends StatelessWidget {
   final bool canChangeViewMode;
   final UserGrade? userGrade;
 
+  /// 사용자 등급과 게시글 수 정보를 보여줍니다.
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -164,11 +174,13 @@ class _BoardToolbar extends StatelessWidget {
   }
 }
 
+/// 게시글 데이터를 기반으로 리스트 또는 갤러리 UI를 선택합니다.
 class _BoardContent extends StatelessWidget {
   const _BoardContent({required this.controller});
 
   final BoardController controller;
 
+  /// 게시글이 없으면 안내 문구, 있으면 애니메이션 전환을 제공합니다.
   @override
   Widget build(BuildContext context) {
     final posts = controller.posts;
@@ -190,11 +202,13 @@ class _BoardContent extends StatelessWidget {
   }
 }
 
+/// 게시글을 리스트 형태로 보여주는 위젯입니다.
 class _PostListView extends StatelessWidget {
   const _PostListView({required this.posts, super.key});
 
   final List<BoardPost> posts;
 
+  /// 게시글 목록을 `ListView`로 렌더링합니다.
   @override
   Widget build(BuildContext context) {
     final controller = context.read<BoardController>();
@@ -214,11 +228,13 @@ class _PostListView extends StatelessWidget {
   }
 }
 
+/// 게시글을 갤러리 카드 형태로 보여주는 위젯입니다.
 class _PostGalleryView extends StatelessWidget {
   const _PostGalleryView({required this.posts, super.key});
 
   final List<BoardPost> posts;
 
+  /// 화면 크기에 따라 열 수를 조정하며 `GridView`를 구성합니다.
   @override
   Widget build(BuildContext context) {
     final controller = context.read<BoardController>();
@@ -248,6 +264,7 @@ class _PostGalleryView extends StatelessWidget {
   }
 }
 
+/// 게시글 상세 화면으로 이동하며 조회 수를 증가시킵니다.
 void _openDetail(BuildContext context, BoardController controller, BoardPost post) {
   controller.registerView(post.id);
   Navigator.of(context).push(

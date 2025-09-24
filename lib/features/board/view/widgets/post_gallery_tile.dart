@@ -1,8 +1,12 @@
+// 파일 경로: lib/features/board/view/widgets/post_gallery_tile.dart
+// 파일 설명: 게시글을 갤러리 카드 레이아웃으로 렌더링하는 위젯.
+
 import 'package:flutter/material.dart';
 
 import '../../models/board_post.dart';
 import '../../widgets/comment_utils.dart';
 
+/// 갤러리 모드에서 사용하는 게시글 카드 컴포넌트입니다.
 class PostGalleryTile extends StatelessWidget {
   const PostGalleryTile({
     required this.post,
@@ -15,6 +19,7 @@ class PostGalleryTile extends StatelessWidget {
   final String formattedDate;
   final VoidCallback onTap;
 
+  /// 커버 이미지와 통계를 포함한 카드 UI를 구성합니다.
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -103,6 +108,7 @@ class PostGalleryTile extends StatelessWidget {
   }
 }
 
+/// 조회수, 좋아요 등을 숫자와 함께 출력하는 위젯입니다.
 class _IconStat extends StatelessWidget {
   const _IconStat({
     required this.icon,
@@ -112,6 +118,7 @@ class _IconStat extends StatelessWidget {
   final IconData icon;
   final int value;
 
+  /// 아이콘과 값을 한 줄로 보여줍니다.
   @override
   Widget build(BuildContext context) {
     return Row(

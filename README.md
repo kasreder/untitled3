@@ -23,6 +23,7 @@ lib/
 │   │   ├── models/
 │   │   │   ├── login_type.dart
 │   │   │   ├── user.dart
+│   │   │   ├── user_grade.dart
 │   │   │   └── user_wallet.dart
 │   │   ├── services/
 │   │   │   ├── crypto_service.dart
@@ -40,17 +41,21 @@ lib/
 │   │   ├── view/
 │   │   │   ├── board_page.dart
 │   │   │   ├── post_detail_page.dart
-│   │   │   └── post_editor_page.dart
+│   │   │   ├── post_editor_page.dart
+│   │   │   └── widgets/
+│   │   │       ├── post_gallery_tile.dart
+│   │   │       └── post_list_tile.dart
 │   │   └── widgets/
 │   │       ├── ckeditor5.dart
-│   │       ├── ckeditor5_platform_io.dart
 │   │       ├── ckeditor5_platform_interface.dart
+│   │       ├── ckeditor5_platform_io.dart
 │   │       ├── ckeditor5_platform_web.dart
-│   │       ├── comment_utils.dart
-│   │       ├── post_gallery_tile.dart
-│   │       └── post_list_tile.dart
+│   │       └── comment_utils.dart
 │   └── simple_page/
 │       └── simple_page.dart
+├── util/
+│   └── editor/
+│       ├── package.json 외 CKEditor 5 빌드 설정 파일 다수
 └── main.dart
 ```
 
@@ -62,9 +67,10 @@ lib/
   - `navigation/`: 내비게이션 관련 컨트롤러와 공용 위젯, 목적지 정의를 포함합니다.
   - `router/`: `GoRouter` 구성을 담당합니다.
 - **lib/features**: 실제 화면(Feature)을 모듈 단위로 관리합니다.
-  - `auth/`: 로그인, 사용자/지갑 더미 데이터, 암호화 서비스를 포함하는 인증 모듈입니다.
-  - `board/`: 자유 게시판 기능(리스트/갤러리 전환, CKEditor 5 기반 에디터, 댓글/대댓글, 좋아요·싫어요·공유)을 제공합니다.
+  - `auth/`: 로그인 UI(`view/login_page.dart`), AES-256 암호화(`services/crypto_service.dart`), 메타마스크 연동(`services/metamask_connector.dart`), 등급·회원 모델(`models/user_grade.dart`, `models/user.dart`)과 더미 데이터 저장소(`data/dummy_user_repository.dart`)를 포함합니다.
+  - `board/`: 자유 게시판 기능(리스트/갤러리 전환, CKEditor 5 기반 에디터, 댓글/대댓글, 좋아요·싫어요·공유)을 제공합니다. 뷰 전용 위젯(`view/widgets/`), 에디터 브리지(`widgets/ckeditor5*.dart`), 상태 관리(`controllers/board_controller.dart`)가 역할별로 분리되어 있습니다.
   - `simple_page/`: 개발 중인 메뉴를 대신 보여주는 플레이스홀더 화면입니다.
+- **lib/util/editor**: CKEditor 5 원본 소스와 pnpm 기반 빌드 설정을 보관합니다.
 
 ## 자유 게시판 데이터
 

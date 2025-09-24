@@ -1,13 +1,19 @@
+// 파일 경로: lib/features/board/models/board_post.dart
+// 파일 설명: 게시판 게시글과 보기 모드 열거형을 정의한 데이터 모델.
+
 import 'package:equatable/equatable.dart';
 
 import 'board_comment.dart';
 
+/// 게시판이 제공하는 화면 모드를 정의합니다.
 enum BoardViewMode {
   list,
   gallery,
 }
 
+/// 게시글 본문, 통계, 댓글 목록을 보유한 도메인 모델입니다.
 class BoardPost extends Equatable {
+  /// 게시글 생성자. 모든 필수 필드를 받아 불변 객체를 구성합니다.
   const BoardPost({
     required this.id,
     required this.title,
@@ -38,6 +44,7 @@ class BoardPost extends Equatable {
   final List<String> images;
   final List<BoardComment> comments;
 
+  /// 특정 필드만 수정한 새 게시글 인스턴스를 반환합니다.
   BoardPost copyWith({
     String? id,
     String? title,
@@ -70,6 +77,7 @@ class BoardPost extends Equatable {
     );
   }
 
+  /// JSON 데이터를 도메인 모델로 변환합니다.
   factory BoardPost.fromJson(Map<String, dynamic> json) {
     return BoardPost(
       id: json['id'] as String,
@@ -94,6 +102,7 @@ class BoardPost extends Equatable {
     );
   }
 
+  /// API 응답 등을 위해 현재 상태를 JSON으로 직렬화합니다.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -114,6 +123,7 @@ class BoardPost extends Equatable {
     };
   }
 
+  /// 공유하기 기능에서 사용할 기본 메시지입니다.
   String get shareMessage => '[청록 네트워크] $title';
 
   @override

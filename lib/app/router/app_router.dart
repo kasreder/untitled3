@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../navigation/adaptive_navigation_shell.dart';
 import '../navigation/app_destinations.dart';
 
+/// 전역 라우팅 규칙과 셸 구성을 캡슐화한 클래스.
 class AppRouter {
   AppRouter();
 

@@ -1,8 +1,12 @@
+// 파일 경로: lib/features/board/view/widgets/post_list_tile.dart
+// 파일 설명: 게시글 리스트 카드 형태를 정의한 프레젠테이션 위젯.
+
 import 'package:flutter/material.dart';
 
 import '../../models/board_post.dart';
 import '../../widgets/comment_utils.dart';
 
+/// 자유 게시판 목록에서 단일 게시글을 카드로 보여주는 위젯입니다.
 class PostListTile extends StatelessWidget {
   const PostListTile({
     required this.post,
@@ -15,6 +19,7 @@ class PostListTile extends StatelessWidget {
   final String formattedDate;
   final VoidCallback onTap;
 
+  /// 게시글 요약 정보를 카드로 렌더링합니다.
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -86,6 +91,7 @@ class PostListTile extends StatelessWidget {
   }
 }
 
+/// 게시글 부가 정보를 아이콘과 함께 보여주는 보조 위젯입니다.
 class _InfoChip extends StatelessWidget {
   const _InfoChip({
     required this.icon,
@@ -95,6 +101,7 @@ class _InfoChip extends StatelessWidget {
   final IconData icon;
   final String label;
 
+  /// 작은 아이콘과 텍스트 조합을 렌더링합니다.
   @override
   Widget build(BuildContext context) {
     return Row(
