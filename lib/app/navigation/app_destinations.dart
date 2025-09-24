@@ -2,6 +2,7 @@
 // 파일 설명: 어댑티브 셸 라우터에서 사용할 목적지를 정의.
 import 'package:flutter/material.dart';
 import 'package:untitled3/features/auth/view/login_page.dart';
+import 'package:untitled3/features/board/view/board_page.dart';
 import 'package:untitled3/features/simple_page/simple_page.dart';
 
 class AppDestination {
@@ -40,7 +41,7 @@ final List<AppDestination> appDestinations = [
     name: 'free',
     label: '자유',
     icon: Icons.forum_outlined,
-    builder: (_) => const SimplePage(message: '자유 게시판이 준비 중입니다.'),
+    builder: (_) => const BoardPage(),
   ),
   AppDestination(
     location: '/experiment',
